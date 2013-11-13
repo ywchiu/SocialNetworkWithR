@@ -128,12 +128,14 @@
 
 					</ul>
 				
-				</section>	
+				</section>
+			<section>	
 				<section>
 					<h2>Lesson 1: Connect to Social Network</h2>
 					<ul>
 						<li>OAuth Flow</li>
 						<li>Oauth v.s. OAuth2</li>
+						<li>OpenID</li>
 					</ul>
 				
 				</section>
@@ -154,14 +156,69 @@
 						<li>OAuth 2.0 is meant to have a clean separation of roles between the server responsible for handling OAuth requests and the server handling user authorization</li>
 					</ul>
 				
-				</section>				
-				<section>
-					<h2>Big Data Era</h2>
-					<p>
-						Quick analysis, finding meaning beneath data.
-					</p>
 				</section>
-								
+				<section>
+					<h2>OpenID</h2>
+					<p>
+						<img src="img/openid.png" style="background:None;margin:-30px 0px 0px 0px;border:None;box-shadow:None;" width="600px;">
+					</p>
+				
+				</section>
+			</section>
+							
+				<section>
+					<h2>Connect to Facebook</h2>
+					<p>
+						<img src="img/fb.png" width="800px;">
+					</p>
+					<p>			
+						<small>https://developers.facebook.com/</small>
+					</p>	
+				</section>
+
+				<section>
+					<h2>Get Access Token</h2>
+					<p>
+						<img src="img/accesstoken.png" width="800px;">
+					</p>
+					<p>			
+						<small>https://developers.facebook.com/tools/explorer/</small>
+					</p>	
+				</section>
+				<section>
+					<h2>User Permission</h2>
+					<p>
+						<img src="img/userpermission.png" width="800px;">
+					</p>	
+				</section>
+				<section>
+					<h2>Permission List</h2>
+					<ul>
+						<li>User Data Permissions: 
+						<ul>
+						<li>user_hometown</li>
+						<li>user_location</li>
+						<li>user_interests</li>
+						<li>user_likes</li>
+						<li>user_relationships</li>
+						</ul></li>
+						<li>Friends Data Permissions: 
+							<ul>
+							<li>friends_hometown</li>
+							<li>friends_location</li>
+							<li>friends_interests</li>
+							<li>friends_likes</li>
+							<li>friends_relationships</li>
+							</ul></li>
+						<li>Extended Permissions: <ul><li>read_friendlists</li></ul></li>
+					</ul>	
+				</section>
+				<section>
+					<h2>Copy Token</h2>
+					<p>
+						<img src="img/copytoken.png" width="800px;">
+					</p>	
+				</section>				
 				<section>
 					<h2>Data Analysis</h2>
 						<ol>
@@ -171,12 +228,29 @@
 						</ol>
 				</section>						
 
+
+				
+				<section data-markdown>
+					<script type="text/template">
+						## Facebook Connect
+							facebook <-  function( path = "me", access_token = token, options){
+							  if( !missing(options) ){
+								options <- sprintf( "?%s", paste( names(options), "=", unlist(options), collapse = "&", sep = "" ) )
+							  } else {
+								options <- ""
+							  }
+							  url <- sprintf( "https://graph.facebook.com/%s%s?access_token=%s", path, URLencode(options, reserved = TRUE), access_token )
+							  # print(url)
+							  data <- getURL( url, ssl.verifypeer = FALSE  )
+							  fromJSON( data )
+							}
+					</script>
+				</section>	
+
 				<section>
 					<h1>THANK YOU</h1>
-					<h3><a>Please Come and Visit Taiwan R User Group</a></h3>		
 					<img style="background:None;margin:-30px 0px 0px 0px;border:None;box-shadow:None" src="img/logo2.png">					
-				</section>
-
+				</section>				
 				<!--section>
 					<h2>R Package Comparison</h2>
 					<ol>
