@@ -219,15 +219,52 @@
 						<img src="img/copytoken.png" width="800px;">
 					</p>	
 				</section>				
-				<section>
-					<h2>Data Analysis</h2>
-						<ol>
-							<li><em>Preparing to run the Data (Munging)</em></li>
-							<li class="fragment highlight-red"><em>Running the model (Analysis)</em></li>
-							<li><em>Interpreting the result</em></li>
-						</ol>
-				</section>						
 
+
+				<section>
+					<h2>Required Packages</h2>
+					<ul>
+						<li>RCurl
+							<ul>
+								<li>General network (HTTP/FTP/...) client interface for R</li>
+							</ul>
+						</li>
+						<li>rjson
+							<ul>
+								<li>JSON for R</li>
+							</ul>
+						</li>
+						<li>XML
+							<ul>
+								<li>Tools for parsing and generating XML within R and S-Plus</li>
+							</ul>
+						</li>
+						<li>igraph
+							<ul>
+								<li>Network analysis and visualization</li>
+							</ul>
+						</li>
+						<li>bitops
+							<ul>
+								<li>Bitwise Operations</li>
+							</ul>
+						</li>						
+						
+					</ul>	
+				</section>
+
+				
+				<section data-markdown>
+					<script type="text/template">
+						## Required Package
+							install.packages(c('rjson','RCurl','XML','igraph','bitops'),dependencies=TRUE)
+							library(rjson)
+							library(RCurl)
+							library(XML)
+							library(igraph)
+							library(bitops)
+					</script>
+				</section>	
 
 				
 				<section data-markdown>
@@ -247,6 +284,37 @@
 					</script>
 				</section>	
 
+				<section>
+					<h2>Test On API Explorer</h2>
+					<p>
+						<img src="img/explorer1.png" width="800px;">
+					</p>	
+				</section>	
+				
+				<section data-markdown>
+					<script type="text/template">
+						## Executed Result
+							> facebook("me",access_token)
+							$id
+							[1] "778224889"
+
+							$name
+							[1] "David Chiu"
+
+							$first_name
+							[1] "David"
+
+							$last_name
+							[1] "Chiu"
+
+							$link
+							[1] "https://www.facebook.com/ChiuYW"
+
+							$username
+							[1] "ChiuYW"
+					</script>
+				</section>	
+				
 				<section>
 					<h1>THANK YOU</h1>
 					<img style="background:None;margin:-30px 0px 0px 0px;border:None;box-shadow:None" src="img/logo2.png">					
