@@ -165,7 +165,7 @@
 				
 				</section>
 			</section>
-							
+			<section>							
 				<section>
 					<h2>Connect to Facebook</h2>
 					<p>
@@ -219,7 +219,7 @@
 						<img src="img/copytoken.png" width="800px;">
 					</p>	
 				</section>				
-
+			</section>
 
 				<section>
 					<h2>Required Packages</h2>
@@ -270,19 +270,20 @@
 				<section data-markdown>
 					<script type="text/template">
 						## Facebook Connect
-							facebook <-  function( path = "me", access_token = token, options){
+							fb_connect <-  function( path = "me", access_token = token, options){
 							  if( !missing(options) ){
 								options <- sprintf( "?%s", paste( names(options), "=", unlist(options), collapse = "&", sep = "" ) )
+								options <- gsub(",", "%2C", options)
+								url <- sprintf( "https://graph.facebook.com/%s%s&access_token=%s", path, options, access_token )
 							  } else {
-								options <- ""
+								url <- sprintf( "https://graph.facebook.com/%s?access_token=%s", path, access_token )
 							  }
-							  url <- sprintf( "https://graph.facebook.com/%s%s?access_token=%s", path, URLencode(options, reserved = TRUE), access_token )
-							  # print(url)
 							  data <- getURL( url, ssl.verifypeer = FALSE  )
 							  fromJSON( data )
 							}
 					</script>
-				</section>	
+				</section>
+				
 
 				<section>
 					<h2>Test On API Explorer</h2>
@@ -294,7 +295,7 @@
 				<section data-markdown>
 					<script type="text/template">
 						## Executed Result
-							> facebook("me",access_token)
+							> fb_connect("me",access_token)
 							$id
 							[1] "778224889"
 
@@ -313,6 +314,104 @@
 							$username
 							[1] "ChiuYW"
 					</script>
+				</section>	
+
+								<section data-markdown>
+					<script type="text/template">
+						## Get Friend List
+							> friends <- fb_connect(path="me/friends", access_token=access_token)
+							> friends
+					</script>
+				</section>	
+				
+				<section data-markdown>
+					<script type="text/template">
+						## Facebook Element Extractor
+							myself <- fb_connect(path="me", access_token=access_token, options=list("fields"="id,name,location,hometown,gender,friends.fields(location,hometown,name,gender)"))
+							myname <- myself$name
+
+							friends <- myself$friends
+							
+							# extract Facebook IDs
+							friends.id <- sapply(friends$data, function(x) x$id)
+							
+							# extract names 
+							friends.name <- unlist(sapply(friends$data, function(x)  iconv(x$name,to='UTF8',sub="")))
+							friends.gender <- sapply(friends$data, function(x) unlist(x$gender))
+							friends.location.id <- unlist(sapply(friends$data, function(x) x$location$id))
+							friends.location.name <- unlist(sapply(friends$data, function(x) {if (is.null(x$location$id)) "none" else iconv(x$location$name,to='UTF8',sub="")}))
+
+							friends.hometown.name <- unlist(sapply(friends$data, function(x) {if (is.null(x$hometown$id)) "none" else iconv(x$hometown$name,to='UTF8',sub="")}))
+
+							friendlists <- fb_connect( path="me/friendlists", access_token=access_token)
+							friendlists.id <- sapply(friendlists$data, function(x) x$id)
+							friendlists.name <- sapply(friendlists$data, function(x) x$name)
+					</script>
+				</section>	
+				<section data-markdown>
+					<script type="text/template">
+						## Get Friendship
+							friendships <- function() {
+							  print("Generating friendship matrix")
+							  N <- length(friends.id)
+							  friendship.matrix <- matrix(0,N,N)
+							  for (i in 1:N) {
+								print(paste(i,friends.name[i]))
+								tmp <- facebook( path=paste("me/mutualfriends", friends.id[i], sep="/") , access_token=access_token)
+								mutualfriends <- sapply(tmp$data, function(x) x$id)
+								friendship.matrix[i,friends.id %in% mutualfriends] <- 1
+							  }
+							  
+							  # Create a vector of 1's for my connections with my friends
+							  myfriends <- c(1:N)
+							  myfriends[] <-1
+							  
+							  # Add this vector as a column to the friendship matrix
+							  friendship.matrix <- cbind(friendship.matrix,myfriends)
+							  
+							  # Append my friendship with myself (0 in this case), and add it as a row
+							  friendship.matrix <- rbind(friendship.matrix,append(myfriends,0))
+							  
+							  print(paste("Added",myname))
+							  
+							  rownames(friendship.matrix) <- append(friends.name,myname)
+							  colnames(friendship.matrix) <- append(friends.name,myname)
+							  
+							  return (friendship.matrix)
+							}
+					</script>
+				</section>
+				<section data-markdown>
+					<script type="text/template">
+						## Friend Graph
+							friendgraph <- function(friendship.matrix) {
+							  friendship.graph <- graph.adjacency(friendship.matrix, mode=c("undirected"), weighted=NULL)
+							  
+							  V(friendship.graph)$gender <- append(friends.gender, myself$gender)
+							  V(friendship.graph)$location <- append(friends.location.name, myself$location$name)
+							  V(friendship.graph)$hometown <- append(friends.hometown.name, myself$hometown$name)
+							  V(friendship.graph)$Label <- V(friendship.graph)$name
+							  V(friendship.graph)$kind <- "friend"
+							  return(friendship.graph)
+							}
+
+					</script>
+				</section>					
+				<section>
+					<h2>Gephi</h2>
+					<p>
+						Gephi, an open source graph visualization and manipulation software
+					</p>
+					<p>
+						<img style="background:None;border:None;box-shadow:None" src="img/gephi.jpg">
+					</p>					
+				</section>	
+
+				<section>
+					<h2>Network Graph Term</h2>
+					<p>
+						Gephi, an open source graph visualization and manipulation software
+					</p>					
 				</section>	
 				
 				<section>
