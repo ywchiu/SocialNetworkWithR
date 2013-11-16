@@ -316,11 +316,20 @@
 					</script>
 				</section>	
 
-								<section data-markdown>
+				<section data-markdown>
 					<script type="text/template">
 						## Get Friend List
 							> friends <- fb_connect(path="me/friends", access_token=access_token)
 							> friends
+					</script>
+				</section>	
+
+				<section data-markdown>
+					<script type="text/template">
+						## Get Friend Group List
+							friendlists <- fb_connect( path="me/friendlists", access_token=access_token)
+							friendlists.id <- sapply(friendlists$data, function(x) x$id)
+							friendlists.name <- sapply(friendlists$data, function(x) x$name)
 					</script>
 				</section>	
 				
@@ -343,9 +352,7 @@
 
 							friends.hometown.name <- unlist(sapply(friends$data, function(x) {if (is.null(x$hometown$id)) "none" else iconv(x$hometown$name,to='UTF8',sub="")}))
 
-							friendlists <- fb_connect( path="me/friendlists", access_token=access_token)
-							friendlists.id <- sapply(friendlists$data, function(x) x$id)
-							friendlists.name <- sapply(friendlists$data, function(x) x$name)
+
 					</script>
 				</section>	
 				<section data-markdown>
@@ -406,12 +413,39 @@
 						<img style="background:None;border:None;box-shadow:None" src="img/gephi.jpg">
 					</p>					
 				</section>	
-
 				<section>
-					<h2>Network Graph Term</h2>
+					<h2>Learn More About Gephi</h2>
 					<p>
-						Gephi, an open source graph visualization and manipulation software
+						https://www.udemy.com/gephi/
 					</p>					
+				</section>					
+				<section data-markdown>
+					<script type="text/template">
+						## Get Likes Count of Posts
+							require(plyr)
+							posts <- fb_connect(path="me/posts", access_token=access_token, options=list("fields"="likes.fields(name)"))
+							post.likes <- sapply(posts$data, function(x) x$likes)
+							post.likes.data <- sapply(post.likes, function(x) x$data)
+							li = list()
+							for (i in 1:length(post.likes.data)){
+							  for (j in 1:(length(post.likes.data[[i]])-1)){
+								li <- append(li, post.likes.data[[i]][[j]]$name)
+							  }
+							}
+							df = do.call(rbind.data.frame, li)
+							colnames(df) <- c("name")
+							ddply(df, .(name), summarize, NumSubs = length(name))
+					</script>
+				</section>	
+				<section>
+					<h2>Your Turn</h2>
+						<ul>
+							<li>Popular Checkins</li>
+							<li>Common Interest</li>
+							<li>Female/Male Distribution</li>
+							<li>Photos Being Liked</li>
+							<li>Asociation Rule of Friends</li>
+						</ul>					
 				</section>	
 				
 				<section>
