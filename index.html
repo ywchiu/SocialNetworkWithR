@@ -51,7 +51,7 @@
 			<div class="slides">
 				<section>
 					
-					<h2>Social Network ANnalysis With R</h2>
+					<h2>Social Network Analysis With R</h2>
 					
 					<p>
 						<small><a href="/">David Chiu       </a>   @ 中興大學</small>
@@ -81,12 +81,13 @@
 					<h2>Agenda</h2>
 					<ul>
 						<li>What is Social Network?</li>
-						<li>Why Analyze Social Network?</li>
+						<li>Why to Analyze Social Network?</li>
  						<li>How to Analyze						
 							<ul>
-								<li>Social Network Connection (Oauth, Oauth2)</li>
-								<li>Social Network Analysis (Network Graph)</li>
-								<li>Social Network Graph</li>
+								<li>Social Network Connection (Oauth, Oauth2, OpenID)</li>
+								<li>Social Network Analysis With R</li>
+								<li>Social Network Visualization (Gephi)</li>
+								<li>Facebook Post Liked Analysis</li>
 							</ul>	
 						</li>
 						<li>Conclusion</li>
@@ -129,6 +130,13 @@
 					</ul>
 				
 				</section>
+				<section>
+					<h2>Explore Facebook </h2>
+					<p>
+						<img src="img/fb.jpg" style="background:None;border:None;box-shadow:None;" width="600px;">
+					</p>
+				
+				</section>				
 			<section>	
 				<section>
 					<h2>Lesson 1: Connect to Social Network</h2>
@@ -139,10 +147,14 @@
 					</ul>
 				
 				</section>
+				
 				<section>
 					<h2>OAuth Flow</h2>
 					<p>
-						<img src="img/oauth.png" style="background:None;margin:-30px 0px 0px 0px;border:None;box-shadow:None;" width="600px;">
+						Open standard for authorization. OAuth provides a method for clients to access server resources on behalf of a resource owner
+					</p>					
+					<p>
+						<img src="img/oauth.png" style="background:None;border:None;box-shadow:None;" width="600px;">
 					</p>
 				
 				</section>	
@@ -160,11 +172,15 @@
 				<section>
 					<h2>OpenID</h2>
 					<p>
-						<img src="img/openid.png" style="background:None;margin:-30px 0px 0px 0px;border:None;box-shadow:None;" width="600px;">
+						Open standard that allows users to be authenticated by certain co-operating sites
+					</p>
+					<p>
+						<img src="img/openid.png" style="background:None;border:None;box-shadow:None;" width="600px;">
 					</p>
 				
 				</section>
 			</section>
+		
 			<section>							
 				<section>
 					<h2>Connect to Facebook</h2>
@@ -220,7 +236,12 @@
 					</p>	
 				</section>				
 			</section>
-
+			<section>
+				<section>
+						<h2>Lesson 2: Social Network Analysis With R</h2>
+						<p>Let's Hack</p>
+					
+				</section>	
 				<section>
 					<h2>Required Packages</h2>
 					<ul>
@@ -346,7 +367,7 @@
 							
 							# extract names 
 							friends.name <- unlist(sapply(friends$data, function(x)  iconv(x$name,to='UTF8',sub="")))
-							friends.gender <- sapply(friends$data, function(x) unlist(x$gender))
+							friends.gender <- sapply(friends$data, function(x) unlist(if(is.null(x$gender)) "none" else x$gender))
 							friends.location.id <- unlist(sapply(friends$data, function(x) x$location$id))
 							friends.location.name <- unlist(sapply(friends$data, function(x) {if (is.null(x$location$id)) "none" else iconv(x$location$name,to='UTF8',sub="")}))
 
@@ -403,7 +424,28 @@
 							}
 
 					</script>
-				</section>					
+				</section>
+				<section data-markdown>
+					<script type="text/template">
+						## Draw Friendship Graph
+							f_m <- friendships()
+							f_g <- friendgraph(f_m)
+							write.graph(f_g, "friends.graphml",format="graphml")
+					</script>
+				</section>				
+				<section>
+					<h2>Graph XML Foramt (Graphml)</h2>
+					<p>
+						<img style="background:None;border:None;box-shadow:None" src="img/gephiformat.png">
+					</p>					
+				</section>				
+			</section>
+			<section>
+				<section>
+						<h2>Lesson 3: Social Network Visualization</h2>
+						<p>Using Gephi</p>
+					
+				</section>			
 				<section>
 					<h2>Gephi</h2>
 					<p>
@@ -412,13 +454,21 @@
 					<p>
 						<img style="background:None;border:None;box-shadow:None" src="img/gephi.jpg">
 					</p>					
-				</section>	
+				</section>
+				<section>
+					<h2>Modularity</h2>
+					<ul>
+						<li>Measure of the structure of networks or graphs. It was designed to measure the strength of division of a network into modules </li>
+						<li>Networks with high modularity have dense connections between the nodes within modules but sparse connections between nodes in different modules</li>
+					</ul>					
+				</section>					
 				<section>
 					<h2>Learn More About Gephi</h2>
 					<p>
 						https://www.udemy.com/gephi/
 					</p>					
-				</section>					
+				</section>
+			</section>	
 				<section data-markdown>
 					<script type="text/template">
 						## Get Likes Count of Posts
@@ -438,13 +488,21 @@
 					</script>
 				</section>	
 				<section>
-					<h2>Your Turn</h2>
+					<h2>Conclusion Remark</h2>
 						<ul>
-							<li>Popular Checkins</li>
-							<li>Common Interest</li>
-							<li>Female/Male Distribution</li>
-							<li>Photos Being Liked</li>
-							<li>Asociation Rule of Friends</li>
+							<li>Interesting Fact Abour Friends</li>
+							<li>Value Behind The Network</li>
+							<li>Statstic Is Worth More Than Thousand of Words</li>
+						</ul>					
+				</section>					
+				<section>
+					<h2>Your Turn to Do Some Analysis</h2>
+						<ul>
+							<li>Find Popular Checkins Among Your Friends</li>
+							<li>Common Interest Between Your Friends</li>
+							<li>Female/Male Distribution of Your Know Friends</li>
+							<li>Most Pupular Photos Being Liked</li>
+							<li>Asociation Rule of Friends (Gossip)</li>
 						</ul>					
 				</section>	
 				
