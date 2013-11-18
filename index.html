@@ -348,37 +348,35 @@
 				<section data-markdown>
 					<script type="text/template">
 						## Get Friend Group List
-							friendlists <- fb_connect( path="me/friendlists", access_token=access_token)
-							friendlists.id <- sapply(friendlists$data, function(x) x$id)
-							friendlists.name <- sapply(friendlists$data, function(x) x$name)
+							friendgroups <- fb_connect( path="me/friendlists", access_token=access_token)
+							friendgroups.id   <- sapply(friendgroups$data, function(x) x$id)
+							friendgroups.name <- sapply(friendgroups$data, function(x) x$name)
 					</script>
 				</section>	
 				
 				<section data-markdown>
 					<script type="text/template">
 						## Facebook Element Extractor
-							myself <- fb_connect(path="me", access_token=access_token, options=list("fields"="id,name,location,hometown,gender,friends.fields(location,hometown,name,gender)"))
-							myname <- myself$name
-
-							friends <- myself$friends
+							# Get Friends Information From FB
+							me <- fb_connect(path="me", access_token=access_token, options=list("fields"="id,name,location,hometown,gender,friends.fields(location,hometown,name,gender)"))
+							myname <- me$name
+							friends <- me$friends
 							
-							# extract Facebook IDs
+							# Extract Facebook IDs
 							friends.id <- sapply(friends$data, function(x) x$id)
 							
-							# extract names 
+							# Extract FB Meta Information 
 							friends.name <- unlist(sapply(friends$data, function(x)  iconv(x$name,to='UTF8',sub="")))
 							friends.gender <- sapply(friends$data, function(x) unlist(if(is.null(x$gender)) "none" else x$gender))
 							friends.location.id <- unlist(sapply(friends$data, function(x) x$location$id))
 							friends.location.name <- unlist(sapply(friends$data, function(x) {if (is.null(x$location$id)) "none" else iconv(x$location$name,to='UTF8',sub="")}))
-
 							friends.hometown.name <- unlist(sapply(friends$data, function(x) {if (is.null(x$hometown$id)) "none" else iconv(x$hometown$name,to='UTF8',sub="")}))
-
 
 					</script>
 				</section>	
 				<section data-markdown>
 					<script type="text/template">
-						## Get Friendship
+						## Get Friendship Matrix
 							friendships <- function() {
 							  print("Generating friendship matrix")
 							  N <- length(friends.id)
@@ -390,17 +388,15 @@
 								friendship.matrix[i,friends.id %in% mutualfriends] <- 1
 							  }
 							  
-							  # Create a vector of 1's for my connections with my friends
-							  myfriends <- c(1:N)
-							  myfriends[] <-1
+							  # Create connections with my friends
+							  friends_con <- c(1:N)
+							  friends_con[] <-1
 							  
 							  # Add this vector as a column to the friendship matrix
-							  friendship.matrix <- cbind(friendship.matrix,myfriends)
+							  friendship.matrix <- cbind(friendship.matrix,friends_con)
 							  
-							  # Append my friendship with myself (0 in this case), and add it as a row
-							  friendship.matrix <- rbind(friendship.matrix,append(myfriends,0))
-							  
-							  print(paste("Added",myname))
+							  # Append my friendship with myself 
+							  friendship.matrix <- rbind(friendship.matrix,append(friends_con,0))
 							  
 							  rownames(friendship.matrix) <- append(friends.name,myname)
 							  colnames(friendship.matrix) <- append(friends.name,myname)
@@ -419,7 +415,6 @@
 							  V(friendship.graph)$location <- append(friends.location.name, myself$location$name)
 							  V(friendship.graph)$hometown <- append(friends.hometown.name, myself$hometown$name)
 							  V(friendship.graph)$Label <- V(friendship.graph)$name
-							  V(friendship.graph)$kind <- "friend"
 							  return(friendship.graph)
 							}
 
@@ -428,9 +423,9 @@
 				<section data-markdown>
 					<script type="text/template">
 						## Draw Friendship Graph
-							f_m <- friendships()
-							f_g <- friendgraph(f_m)
-							write.graph(f_g, "friends.graphml",format="graphml")
+							f_matrix <- friendships()
+							f_graph <- friendgraph(f_matrix)
+							write.graph(f_graph, "friends.graphml",format="graphml")
 					</script>
 				</section>				
 				<section>
@@ -509,61 +504,7 @@
 				<section>
 					<h1>THANK YOU</h1>
 					<img style="background:None;margin:-30px 0px 0px 0px;border:None;box-shadow:None" src="img/logo2.png">					
-				</section>				
-				<!--section>
-					<h2>R Package Comparison</h2>
-					<ol>
-						<li><a href="http://cran.r-project.org/web/views">Cran Task View</a></li>
-						<li><a href="http://crantastic.org/">crantastic</a></li>
-						<li><a href="http://www.rseek.org/">rseek</a></li>
-					</ol>
-				</section>
-				
-				<section>
-					<h2>R Package Search</h2>
-					<ol>
-						<li>help.search() or ??</li>
-						<li>sos - findFn</li>
-						<li>RSiteSearch() - search R site search</li>
-						<li>Rseek.org</li>
-					</ol>
-				</section>
-				
-				<section data-markdown>
-					<script type="text/template">
-						## Cran Task View
-							install.packages("ctv")
-							library("ctv")
-							install.views("MachineLearning")
-					</script>
-				</section>	
-
-				<section>
-					<h2>SVM Comparison</h2>
-
-					<img src="img/classfication_3.png">
-					<blockquote>
-						Karatzoglou, A., Meyer, D., & Hornik, K. (2005). Support vector machines in R.
-					</blockquote>
-				</section>
-				<section>
-					<h2>FB Friend List</h2>
-
-					<img src="img/fbgood0.png">
-
-				</section>
-				<section>
-					<h2>FB Friend Counts</h2>
-
-					<img src="img/fbgood1.png">
-
-				</section>
-				<section>
-					<h2>FB Post Likes</h2>
-
-					<img src="img/fbgood2.png">
-
-				</section-->				
+				</section>							
 			</div>
 
 		</div>
